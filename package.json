@@ -1,0 +1,18 @@
+{
+  "name": "unihomes-refresh-poc",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Proof-of-concept redesign of unihomes.co.uk — not indexed, not affiliated hosting.",
+  "type": "module",
+  "scripts": {
+    "crawl": "node scripts/crawl.mjs",
+    "build": "node scripts/build.mjs",
+    "serve": "node scripts/serve.mjs",
+    "dev": "npm run build && npm run serve"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "cheerio": "^1.2.0",
+    "p-limit": "^6.2.0"
+  }
+}

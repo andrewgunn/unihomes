@@ -1,0 +1,80 @@
+name: Crawl, build & deploy
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: '15 4 * * *' # daily refresh of listings (04:15 UTC)
+  workflow_dispatch:
+    inputs:
+      fresh:
+        description: 'Ignore cached crawl data and re-fetch everything'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Crawled data is kept in the Actions cache rather than committed, so the
+      # mirrored content never appears in the repo (and can't be indexed there).
+      - name: Restore crawl data
+        id: cache
+        uses: actions/cache/restore@v4
+        with:
+          path: data
+          key: crawl-data-${{ github.run_id }}
+          restore-keys: crawl-data-
+
+      # Pushes reuse the cached snapshot for fast deploys; scheduled/manual runs refresh it.
+      - name: Crawl unihomes.co.uk
+        if: github.event_name != 'push' || steps.cache.outputs.cache-matched-key == ''
+        run: node --max-old-space-size=4096 scripts/crawl.mjs ${{ inputs.fresh && '--fresh' || '' }}
+        env:
+          CRAWL_CONCURRENCY: 6
+
+      - name: Save crawl data
+        if: always() && hashFiles('data/meta.json') != ''
+        uses: actions/cache/save@v4
+        with:
+          path: data
+          key: crawl-data-${{ github.run_id }}
+
+      - name: Build site
+        run: node scripts/build.mjs
+        env:
+          BASE_PATH: /unihomes
+          LIVE_API: ${{ vars.LIVE_API }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

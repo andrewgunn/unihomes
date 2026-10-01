@@ -1,0 +1,7 @@
+name = "unihomes-poc-proxy"
+main = "index.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+# Comma-separated origins allowed to call the proxy.
+ALLOWED_ORIGINS = "https://www.andrewgunn.co.uk,https://andrewgunn.github.io,http://localhost:4173"
