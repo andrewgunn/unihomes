@@ -10,13 +10,13 @@
 import { propertyFromHtml } from '../src/shared/normalize.js';
 
 const ORIGIN = 'https://www.unihomes.co.uk';
-const UA = 'Mozilla/5.0 (compatible; UniHomesRefreshPOC/0.1; +https://www.andrewgunn.co.uk/unihomes/)';
+const UA = 'Mozilla/5.0 (compatible; UniHomesRefreshPOC/0.1; +https://andrewgunn.github.io/unihomes/)';
 const FILTERS = ['type', 'bedrooms', 'bathrooms', 'max-price', 'sort', 'page', 'university'];
 const LISTING = /^\/student-accommodation\/[a-z0-9-]+(\/[a-z0-9-]+)?$/;
 const PROPERTY = /^\/property\/\d+(\/[a-z0-9-]+){1,4}$/;
 
 function cors(req, env) {
-  const allowed = (env.ALLOWED_ORIGINS || 'https://www.andrewgunn.co.uk,http://localhost:4173').split(',');
+  const allowed = (env.ALLOWED_ORIGINS || 'https://andrewgunn.github.io,http://localhost:4173').split(',');
   const origin = req.headers.get('Origin') || '';
   return {
     'Access-Control-Allow-Origin': allowed.includes(origin) ? origin : allowed[0],

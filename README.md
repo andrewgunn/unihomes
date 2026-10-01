@@ -4,7 +4,7 @@ A design-refresh proof of concept for [unihomes.co.uk](https://www.unihomes.co.u
 Same branding, search-first (Rightmove-style), mobile-first. Every page of the live site is mirrored
 from a crawl and re-rendered with the new design.
 
-**Preview:** https://www.andrewgunn.co.uk/unihomes/
+**Preview:** https://andrewgunn.github.io/unihomes/
 
 ## SEO safety
 
