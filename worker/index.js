@@ -31,13 +31,14 @@ function cors(req, env) {
 const json = (body, status, headers) =>
   new Response(JSON.stringify(body), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...headers } });
 
-/** Keep only the session cookies; return them as an opaque header value. */
+/** Merge upstream Set-Cookie into the jar; returned to the browser as an opaque header value. */
 function sessionFrom(res, previous) {
   const jar = new Map((previous || '').split('; ').filter(Boolean).map((c) => c.split(/=(.*)/s).slice(0, 2)));
   for (const c of res.headers.getSetCookie?.() || []) {
     const [kv] = c.split(';');
     const [k, v] = kv.split(/=(.*)/s);
-    if (/^(unihomes_session|XSRF-TOKEN)$/.test(k.trim())) jar.set(k.trim(), v);
+    // The live site keeps the per-visitor result ordering across several cookies, so keep them all.
+    if (k && v !== undefined) jar.set(k.trim(), v);
   }
   return [...jar].map(([k, v]) => `${k}=${v}`).join('; ');
 }

@@ -12,6 +12,7 @@ const msg = document.querySelector('[data-404-msg]');
 async function run() {
   if (path.startsWith('/property/')) {
     if (liveEnabled) {
+      msg.innerHTML = `<p class="muted" style="padding:60px 0">${icon('home')} Loading this home from unihomes.co.uk…</p>`;
       try {
         const p = await liveProperty(path);
         if (p && p.id) {

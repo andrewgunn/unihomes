@@ -166,9 +166,11 @@ async function loadMore() {
     try {
       const r = await liveSearch(data.path, state, livePage + 1);
       livePage++;
-      liveMore = r.more;
-      results = results.concat(r.items);
-      append(r.items);
+      const seen = new Set(results.map((s) => s.id));
+      const fresh = r.items.filter((s) => !seen.has(s.id));
+      liveMore = r.more && r.items.length > 0;
+      results = results.concat(fresh);
+      append(fresh);
       updateMap();
     } catch {
       liveMore = false;

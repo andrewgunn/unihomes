@@ -322,7 +322,7 @@ const UTIL = [
 ];
 
 export function property({ p, similar, rewrite }) {
-  const title = p.name || `${plural(p.beds, 'bedroom')} ${p.type === 'apartment' ? 'apartment' : 'house'}`;
+  const title = p.name || `${p.beds} bedroom ${p.type === 'apartment' ? 'apartment' : 'house'}`;
   const where = [p.street, p.area?.name, p.city?.name].filter(Boolean).join(', ');
   const imgs = p.images.length ? p.images : [];
   const livePath = p.path;

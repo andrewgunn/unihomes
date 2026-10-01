@@ -6,6 +6,7 @@ import path from 'node:path';
 import { setBase, href, iconSprite } from '../src/shared/ui.js';
 import { page } from '../src/templates/layout.js';
 import * as T from '../src/templates/pages.js';
+import * as M from '../src/templates/marketing.js';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DATA = process.env.DATA_DIR || path.join(ROOT, 'data');
@@ -248,9 +249,22 @@ const HERO = {
   'partner-with-us-pbsa': ['Turn searching renters into secured bookings.', 'Connect with over 2 million active student home hunters every year.'],
   careers: ['Careers at UniHomes', 'We’re looking for passionate, talented and motivated people to join our team.'],
 };
+const BESPOKE = {
+  'partner-with-us': M.partnerAgents,
+  'partner-with-us-pbsa': M.partnerPbsa,
+  'shared-student-utility-bills': M.bills,
+  about: M.about,
+  contact: M.contact,
+  careers: M.careers,
+};
 for (const [slug, pg] of Object.entries(pages)) {
   if (SPECIAL.has(slug)) continue;
   const key = slug.split('__')[0];
+  if (BESPOKE[key]) {
+    const r = BESPOKE[key]({ pg, site, rewrite });
+    render(pg.path, { ...r, head: (r.head || '').replace(/marketing\.css"/, `marketing.css?v=${VERSION}"`) }, pg.path);
+    continue;
+  }
   const [hero, lead] = HERO[key] || [];
   render(pg.path, T.generic({ pg, rewrite, hero, lead }), pg.path);
 }
